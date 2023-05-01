@@ -12,7 +12,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 
@@ -30,14 +32,13 @@ public class App implements Callable<Integer>
         int total = 0;
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
+        Map<String, Integer> map = new HashMap<String, Integer>();
 
         if(file != null){
             BufferedReader bfr = Files.newBufferedReader(file.toPath());
             String line;
             while ((line = bfr.readLine()) != null) {
                 //QUITAR SIGNOS DE PUNTUACION Y ESPACIOS DOBLES - CONVERTIR A MINUSCULAS
-                total++;
-                System.out.println(total);
                 line = line.toLowerCase();
                 line = line.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
                 line = line.replaceAll("\\s+", " ");
@@ -57,12 +58,25 @@ public class App implements Callable<Integer>
                         if(partes[j] != ""){
                             String etiqueta = partes[j];
                             conexion.IngresarDato(etiqueta, palabra);
+                            if(map.containsKey(etiqueta)){
+                                Integer nuevo = map.get(etiqueta) + 1;
+                                map.replace(etiqueta, nuevo);
+                            }
+                            else{
+                                map.put(etiqueta, 1);
+                            }
                         }
                     }
                 }
             }
 
             //CALCULAR PROBABILIDAD
+            for(Map.Entry<String, Integer> entry : map.entrySet()){
+                String etiquetase = entry.getKey();
+                Integer Totalote = entry.getValue();
+                conexion.TotalEtiquetas(etiquetase, Totalote);
+            }
+
 
             return 0;
         }else {
@@ -73,6 +87,9 @@ public class App implements Callable<Integer>
 
     public static void main( String[] args )
     {
+        CConexion conexion = new CConexion();
+        conexion.crearConexionC();
+        conexion.Frecuencia("pienso");
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
     }

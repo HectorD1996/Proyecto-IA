@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="gt.edu.url.AppTest" time="0.039" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="gt.edu.url.AppTest" time="0.038" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.class.path" value="C:\Users\HP\Documents\IA\proyecto-final\target\test-classes;C:\Users\HP\Documents\IA\proyecto-final\target\classes;C:\Users\HP\.m2\repository\info\picocli\picocli\4.6.3\picocli-4.6.3.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\HP\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\HP\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\HP\.m2\repository\org\mongodb\mongo-java-driver\3.12.5\mongo-java-driver-3.12.5.jar;"/>
+    <property name="java.class.path" value="C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final\target\test-classes;C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final\target\classes;C:\Users\HP\.m2\repository\info\picocli\picocli\4.6.3\picocli-4.6.3.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\HP\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\HP\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\HP\.m2\repository\org\mongodb\mongo-java-driver\3.12.5\mongo-java-driver-3.12.5.jar;"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -15,9 +15,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GT"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-17.0.4\bin"/>
-    <property name="sun.java.command" value="C:\Users\HP\AppData\Local\Temp\surefire13868173220113196418\surefirebooter17449700035054325189.jar C:\Users\HP\AppData\Local\Temp\surefire13868173220113196418 2023-04-30T22-09-54_340-jvmRun1 surefire12059795625495124855tmp surefire_01134811334797329547tmp"/>
+    <property name="sun.java.command" value="C:\Users\HP\AppData\Local\Temp\surefire14997436754914415223\surefirebooter17509122094573712932.jar C:\Users\HP\AppData\Local\Temp\surefire14997436754914415223 2023-05-01T13-21-40_042-jvmRun1 surefire9750930296256495567tmp surefire_016459766560552762836tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="C:\Users\HP\Documents\IA\proyecto-final\target\test-classes;C:\Users\HP\Documents\IA\proyecto-final\target\classes;C:\Users\HP\.m2\repository\info\picocli\picocli\4.6.3\picocli-4.6.3.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\HP\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\HP\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\HP\.m2\repository\org\mongodb\mongo-java-driver\3.12.5\mongo-java-driver-3.12.5.jar;"/>
+    <property name="surefire.test.class.path" value="C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final\target\test-classes;C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final\target\classes;C:\Users\HP\.m2\repository\info\picocli\picocli\4.6.3\picocli-4.6.3.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\HP\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\HP\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\HP\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\HP\.m2\repository\org\mongodb\mongo-java-driver\3.12.5\mongo-java-driver-3.12.5.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\HP"/>
     <property name="user.language" value="es"/>
@@ -25,12 +25,12 @@
     <property name="java.version.date" value="2022-07-19"/>
     <property name="java.home" value="C:\Program Files\Java\jdk-17.0.4"/>
     <property name="file.separator" value="\"/>
-    <property name="basedir" value="C:\Users\HP\Documents\IA\proyecto-final"/>
+    <property name="basedir" value="C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\HP\AppData\Local\Temp\surefire13868173220113196418\surefirebooter17449700035054325189.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\HP\AppData\Local\Temp\surefire14997436754914415223\surefirebooter17509122094573712932.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.4+11-LTS-179"/>
@@ -44,7 +44,7 @@
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\HP\AppData\Local\Temp\"/>
     <property name="java.version" value="17.0.4"/>
-    <property name="user.dir" value="C:\Users\HP\Documents\IA\proyecto-final"/>
+    <property name="user.dir" value="C:\Users\HP\Documents\ProyectoIA\Proyecto-IA\proyecto-final"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="sun.os.patch.level" value=""/>
