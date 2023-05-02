@@ -37,10 +37,12 @@ public class App implements Callable<Integer>
         if(file != null){
             BufferedReader bfr = Files.newBufferedReader(file.toPath());
             String line;
+            int counter = 0;
             while ((line = bfr.readLine()) != null) {
                 //QUITAR SIGNOS DE PUNTUACION Y ESPACIOS DOBLES - CONVERTIR A MINUSCULAS
                 line = line.toLowerCase();
                 line = line.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+                line = line.replaceAll("\\|\\|+", " ");
                 line = line.replaceAll("\\s+", " ");
 
 
@@ -56,7 +58,7 @@ public class App implements Callable<Integer>
                     //LEEMOS POR ETIQUETA
                     for(int j = 1; j<= partes.length - 1; j++ ){
                         if(partes[j] != ""){
-                            String etiqueta = partes[j];
+                            String etiqueta = partes[j].strip();
                             conexion.IngresarDato(etiqueta, palabra);
                             if(map.containsKey(etiqueta)){
                                 Integer nuevo = map.get(etiqueta) + 1;
@@ -66,8 +68,13 @@ public class App implements Callable<Integer>
                                 map.put(etiqueta, 1);
                             }
                         }
+
+
                     }
+
                 }
+                counter++;
+                System.out.println(counter++);
             }
 
             //CALCULAR PROBABILIDAD
@@ -89,7 +96,12 @@ public class App implements Callable<Integer>
     {
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
-        conexion.Frecuencia("pienso");
+        String lines = "But the price of a commodity, have had a long talk with the Count. I asked him a few";
+        lines = lines.toLowerCase();
+        lines = lines.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+        lines = lines.replaceAll("\\|\\|+", " ");
+        lines = lines.replaceAll("\\s+", " ");
+        conexion.Frecuencia(lines);
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
     }

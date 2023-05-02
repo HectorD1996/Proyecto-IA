@@ -11,9 +11,7 @@ import com.mongodb.client.model.Aggregates.*;
 import org.bson.Document;
 
 import javax.print.Doc;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -102,15 +100,114 @@ public class CConexion {
         }
     }
 
-    public Integer Frecuencia(String palabra){
+    public Double Frecuencia(String palabra){
+
+        String Palabras[] = palabra.split(" ");
         ListCollectionsIterable<Document> collections = database.listCollections();
+        List<Double> probPalabra = new ArrayList<>();
+        List<Double> probTotal = new ArrayList<>();
+        List<Double> probTotal2 = new ArrayList<>();
+        List<String> NombreEtiquetas = new ArrayList<>();
+        Double TotalUniverso = 0.0;
+        MongoCollection<Document> collectionEtiq = database.getCollection("etiquetas");
         for (Document var : collections)
         {
-            System.out.println(var.getString("name"));
-            MongoCollection<Document> collection = database.getCollection(var.getString("name"));
+            String NameEtiqueta = var.getString("name");
+            System.out.println(NameEtiqueta);
+            MongoCollection<Document> collection = database.getCollection(NameEtiqueta);
+
+
+            Document query[] = new  Document[Palabras.length];
+            Document result[] = new  Document[Palabras.length];
+            Document query2 = new Document("etiquta", NameEtiqueta);
+            //Document result[] = collection.find(query).first();
+            for (int i = 0; i <= Palabras.length-1; i++){
+                query[i] = new Document("palabra", Palabras[i]);
+                result[i] = collection.find(query[i]).first();
+
+            }
+            if(result.length != 0){
+                //SI EXISTE - MODIFICA LA CANTIDAD
+                if(!NameEtiqueta.equals("etiquetas") && !NameEtiqueta.equals("default")) {
+
+                    Document query3 = new Document("etiqueta", NameEtiqueta);
+                    Document resultEtiq = collectionEtiq.find(query3).first();
+                    Double TotalEtiqueta = (double)resultEtiq.getInteger("total");
+                    Double probabilidad =1.0;
+                    for (int i = 0; i <= result.length -1; i++){
+                        Double valor = 0.0;
+                        if (result[i] == null){
+                            valor=0.0;}
+                        else {
+                             valor = (double) result[i].getInteger("cantidad");
+                        }
+                        //p(m|e) = frecuencia de mensaje/total de palbras
+                        probabilidad = probabilidad * (valor +1/ TotalEtiqueta + 1);
+                    }
+                    //Double valor = (double)result.getInteger("cantidad");
+
+
+                    probPalabra.add(probabilidad);
+                    probTotal.add(TotalEtiqueta);
+                    NombreEtiquetas.add(NameEtiqueta);
+                    TotalUniverso +=TotalEtiqueta;
+                    System.out.println(probabilidad);
+                }
+            }
+            else{
+                if(!NameEtiqueta.equals("etiquetas") && !NameEtiqueta.equals("default")) {
+                    Double valor = 0.0;
+                    Document query3 = new Document("etiqueta", NameEtiqueta);
+                    Document resultEtiq = collectionEtiq.find(query3).first();
+                    Double TotalEtiqueta = (double)resultEtiq.getInteger("total");
+                    probTotal.add(TotalEtiqueta);
+                    NombreEtiquetas.add(NameEtiqueta);
+                    TotalUniverso +=TotalEtiqueta;
+                    Double probabilidad = (valor / TotalEtiqueta);
+                    probPalabra.add(probabilidad);
+                    System.out.println(valor);
+                }
+
+            }
 
         }
-        return 0;
+
+        for (Double v:probTotal
+        ) {
+            //p(e) = total equtiqueta/total universo
+            probTotal2.add(v + 1/TotalUniverso +1);
+            System.out.println(v +1 /TotalUniverso +1);
+        }
+
+        //Normalizador
+        Double Normalizador = 0.0;
+        for (int i = 0; i < probTotal2.size(); i++)
+        {
+            Normalizador += probPalabra.get(i) * probTotal2.get(i);
+        }
+        System.out.println("Normlizador");
+        System.out.println(Normalizador);
+
+        List<Double> probabilidadFinal = new ArrayList<>();
+        Map<Double, String> propFin = new HashMap<>();
+        for (int i = 0; i <= probPalabra.size() -1; i++)
+        {
+            double temp = (probPalabra.get(i)*probTotal2.get(i))/Normalizador;
+            System.out.println("valor"+ i);
+            System.out.println(temp);
+            propFin.put(temp, NombreEtiquetas.get(i));
+            probabilidadFinal.add(temp);
+        }
+
+        Collections.sort(probabilidadFinal);
+        Double key = probabilidadFinal.get(probabilidadFinal.size()-1);
+
+        System.out.println(propFin.get(key));
+
+
+        return probabilidadFinal.get(probabilidadFinal.size()-1);
     }
+
+
 
 }
