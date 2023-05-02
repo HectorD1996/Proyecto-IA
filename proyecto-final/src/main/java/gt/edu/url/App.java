@@ -29,7 +29,7 @@ public class App implements Callable<Integer>
     @Override
     public Integer call() throws Exception{
 
-        int total = 0;
+        int total_personas = 0;
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
         Map<String, Integer> map = new HashMap<String, Integer>();
@@ -41,7 +41,11 @@ public class App implements Callable<Integer>
                 //QUITAR SIGNOS DE PUNTUACION Y ESPACIOS DOBLES - CONVERTIR A MINUSCULAS
                 line = line.toLowerCase();
                 line = line.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+                line = line.replaceAll("\\|\\|+", " ");
                 line = line.replaceAll("\\s+", " ");
+
+                total_personas++;
+                System.out.println(total_personas);
 
 
                 //SEPARAR EN ETIQUETAS
@@ -77,9 +81,37 @@ public class App implements Callable<Integer>
                 conexion.TotalEtiquetas(etiquetase, Totalote);
             }
 
+            //TOTALES
+
+
+            Scanner scanner = new Scanner(System.in);
+            String input = "";
+            while(!input.equals("exit")){
+                System.out.print("Por favor ingrese la cadena > ");
+                input = scanner.nextLine();
+                if(input.equals("exit")){
+                    break;
+                }
+                Map<String, Double> comparacion = new HashMap<String, Double>();
+                comparacion = conexion.Frecuencia(input);
+
+                //VERIFICAR MAYOR
+                double max = 0.0;
+                String maximo = " ";
+                for (Map.Entry<String, Double> sunoo : comparacion.entrySet()){
+                    double nuevo = sunoo.getValue();
+                    if(nuevo > max){
+                        max = nuevo;
+                        maximo = sunoo.getKey();
+                    }
+                }
+
+                System.out.println("Mayor probabilidad de pertenecer a: " + maximo + " con la probabilidad: " + max);
+            }
 
             return 0;
         }else {
+
             return 1;
         }
     }
@@ -89,7 +121,26 @@ public class App implements Callable<Integer>
     {
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
-        conexion.Frecuencia("pienso");
+        Map<String, Double> comparacion = new HashMap<String, Double>();
+        String ora = "Sir, i am waiting";
+        ora = ora.toLowerCase();
+        ora = ora.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+        ora = ora.replaceAll("\\s+", " ");
+        comparacion = conexion.Frecuencia(ora);
+
+        //VERIFICAR MAYOR
+        double max = 0.0;
+        String maximo = " ";
+        for (Map.Entry<String, Double> sunoo : comparacion.entrySet()){
+            double nuevo = sunoo.getValue();
+            if(nuevo > max){
+                max = nuevo;
+                maximo = sunoo.getKey();
+            }
+        }
+
+
+        System.out.println("Mayor probabilidad de pertenecer a: " + maximo + " con la probabilidad: " + max);
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
     }
