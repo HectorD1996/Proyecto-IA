@@ -102,6 +102,14 @@ public class CConexion {
         }
     }
 
+    public void FrecuenciaEtiquetas(String etiqueta, Integer frecuencia)
+    {
+        MongoCollection<Document> collection = database.getCollection("etiquetas");
+
+        collection.updateOne(new Document("etiqueta", etiqueta),
+                new Document("$set", new Document("frecuencia", frecuencia)));
+
+    }
     public Integer Frecuencia(String palabra){
         ListCollectionsIterable<Document> collections = database.listCollections();
         for (Document var : collections)
@@ -112,5 +120,4 @@ public class CConexion {
         }
         return 0;
     }
-
 }
