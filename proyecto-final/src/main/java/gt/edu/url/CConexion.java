@@ -71,12 +71,12 @@ public class CConexion {
 
     }
 
-    public Integer Total_universo(String etiqueta){
+    public Integer Total_Oraciones(String etiqueta){
         Document query = new Document("etiqueta", etiqueta);
         Document result = database.getCollection("etiquetas").find(query).first();
         Integer total = 0;
         if(result != null){
-            total = result.getInteger("total");
+            total = result.getInteger("frecuencia");
         }
 
         return total;
@@ -91,6 +91,7 @@ public class CConexion {
             //database.createCollection("etiquetas");
             //VERIFICAR SI EXISTE LA ETIQUETA PREVIAMENTE
             Document ingreso = new Document()
+                    .append("id", cantidad + 1)
                     .append("etiqueta",etiqueta)
                     .append("total", cantidadTotal);
             collection.insertOne(ingreso);
@@ -104,6 +105,7 @@ public class CConexion {
                         new Document("$set", new Document("total", valor + cantidadTotal)));
             }else{
                 Document ingreso = new Document()
+                        .append("id", cantidad + 1)
                         .append("etiqueta",etiqueta)
                         .append("total", cantidadTotal);
                 collection.insertOne(ingreso);
@@ -111,90 +113,133 @@ public class CConexion {
         }
     }
 
+    public void FrecuenciaEtiquetas(String etiqueta, Integer frecuencia)
+    {
+        MongoCollection<Document> collection = database.getCollection("etiquetas");
+
+        collection.updateOne(new Document("etiqueta", etiqueta),
+                new Document("$set", new Document("frecuencia", frecuencia)));
+
+    }
+
     public Map<String, Double> Frecuencia(String oracion){
+        //BORRAR
         ListCollectionsIterable<Document> collections = database.listCollections();
-        MongoCollection<Document> base = database.getCollection("etiquetas");
-        Integer valorM = 0;
-        //VER CANTIDAD TOTAL DEL UNIVERSO
+
+        //INICIALIZAR VARIABLES
+        MongoCollection<Document> Coleccion_etiquetas = database.getCollection("etiquetas");
+        Integer TotalOracionesEtiquetas = 0;
+        Map<String, Double> InferenciaTotales = new HashMap<String, Double>();
+
+        //VER CANTIDAD TOTAL DE ORACIONES - SE GUARDA EN valorM
         for (Document etiqueta_uni : collections){
             String universo = etiqueta_uni.getString("name");
-            valorM += Total_universo(universo);
+            TotalOracionesEtiquetas += Total_Oraciones(universo);
         }
 
-        Map<String, Double> totales = new HashMap<String, Double>();
-
+        //SEPARA LA ORACION
+        oracion = oracion.toLowerCase();
+        oracion = oracion.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+        oracion = oracion.replaceAll("\\s+", " ");
         String[] palabras = (oracion.split(" "));
 
-        for (Document etiqueta_base : collections)
-        {
-            //VER LA PRINCIPAL EN ESE MOMENTO
+        Integer cantidad_etiquetas = Math.toIntExact(Coleccion_etiquetas.count());
+
+        //EMPEZAR A CALCULAR LAS INFERENCIAS PARA TODAS LAS ETIQUETAS
+        for(int i = 1; i<= cantidad_etiquetas; i++){
+            //NUMERADOR PARA CALCULAR INFERENCIA
+            //INICIALIZAR VARIABLES
             double denominador = 0.0;
             double numerador = 0.0;
             double multiplicacion = 1.0;
             double multiplicacion_proba = 1.0;
-            String Base_Actual = etiqueta_base.getString("name");
-            //VER LA CANTIDAD DE LA ETIQUETA BASE
-            Document pregunta_base = new Document("etiqueta", Base_Actual);
-            Document resultado_etiqueta_base = base.find(pregunta_base).first();
-            if(resultado_etiqueta_base != null){
-                Integer total_etiqueta_base = resultado_etiqueta_base.getInteger("total");
-                double marginalizado_base =  (double)(total_etiqueta_base + 1) / (valorM + 1);
-                MongoCollection<Document> coleccion_Base = database.getCollection(Base_Actual);
-                for(int i = 0; i < palabras.length; i++){
-                    Document query_3 = new Document("palabra", palabras[i].toString());
-                    Document result3 = coleccion_Base.find(query_3).first();
-                    Integer total_base_palabra = 0;
-                    if(result3 != null){
-                        total_base_palabra = result3.getInteger("cantidad");
-                    }
 
-                    double prob_base = (double)(total_base_palabra + 1)/ (total_etiqueta_base + 1);
-                    multiplicacion = prob_base * multiplicacion;
-                }
-                numerador = (multiplicacion * marginalizado_base);
-                //denominador = numerador;
+            //VER LA CANTIDAD DE ORACIONES PARA LA ETIQUETA ACTUAL - SE GUARDA EN total_etiqueta_base
+            Document pregunta_base = new Document("id", i);
+            Document resultado_etiqueta_base = Coleccion_etiquetas.find(pregunta_base).first();
 
-                for(Document sub_etiqueta : collections){
-                    String Sub_Actual = sub_etiqueta.getString("name");
-                    if(!(Sub_Actual.equals("etiquetas")) && !(Sub_Actual.equals("default"))){
-                        // CANTIDAD DE PALABRAS POR ETIQUETA
-                        Document query = new Document("etiqueta", Sub_Actual);
-                        Document result = base.find(query).first();
-                        multiplicacion_proba = 1.0;
-                        if(result != null){
-                            Integer total_sub_etiqueta = result.getInteger("total");
-                            //CANTIDAD DE VECES QUE ESTA LA PALABRA EN ESA ETIQUETA
-                            for(int j = 0; j< palabras.length; j++){
-                                MongoCollection<Document> collection = database.getCollection(Sub_Actual);
-                                Document query2 = new Document("palabra", palabras[j]);
-                                Document result2 = collection.find(query2).first();
-                                Integer total_sub_palabra = 0;
-                                if(result2 != null){
-                                    total_sub_palabra = result2.getInteger("cantidad");
-                                    //CALCULAR FRECUENCIAS PARA ESA MARGINALIZACION
+            //OBTENER LA CANTIDAD DE ORACIONES PARA ESA ETIQUETA
+            Integer total_oraciones_etiqueta = resultado_etiqueta_base.getInteger("frecuencia");
+            //OBTENER LA CANTIDAD DE PALABRAS EN ESA ETIQUETA
+            Integer total_etiqueta_base = resultado_etiqueta_base.getInteger("total");
+            //OBTENER EL NOMBRE DE LA ETIQUETA
+            String nombre_etiqueta = resultado_etiqueta_base.getString("etiqueta");
 
-                                }
-                                double probabilidad = (double)(total_sub_palabra + 1)/ (total_sub_etiqueta + 1);
-                                multiplicacion_proba = multiplicacion_proba * probabilidad;
+            //AQUI SE CALCULA P(ETIQUETA)
+            double p_numerador_etiqueta =  (double)(total_oraciones_etiqueta) / (TotalOracionesEtiquetas);
 
-                            }
-                            double marginalizado = (double)(total_sub_etiqueta + 1)/ (valorM +1);
+            //AQUI EMPIEZA EL CALCULO DE P(PALABRA|ETIQUETA)
+            MongoCollection<Document> coleccion_Base = database.getCollection(nombre_etiqueta);
 
-                            //CALCULAR ESA SUMA
-                            double resultado_probabilidad = multiplicacion_proba * marginalizado;
-                            denominador += resultado_probabilidad;
-                        }
-                    }
+            //AQUI SE CALCULA P(PALABRA|ETIQUETA)
+            for(int j = 0; j < palabras.length; j++){
+                //SE BUSCA LA PALABRA EN LA BASE DE DATOS
+                Document query_3 = new Document("palabra", palabras[j].toString());
+                Document result3 = coleccion_Base.find(query_3).first();
+                Integer total_palabra_etiqueta = 0;
+                //SI EXISTE LA PALABRA EN ESA ETIQUETA - SI NO EXISTE QUEDA EN 0
+                if(result3 != null){
+                    total_palabra_etiqueta = result3.getInteger("cantidad");
                 }
 
-                //CALCULAR TOTAL
-                double total = numerador / denominador;
-                totales.put(Base_Actual, total);
-                System.out.println(Base_Actual + " " + total);
+                //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
+                double prob_base = (double)(total_palabra_etiqueta)/ (total_etiqueta_base);
+                //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
+                multiplicacion = prob_base * multiplicacion;
+            }
+            //AQUI SE CALCULA EL NUMERADOR P(ORACION|ETIQUETA)*P(ETIQUETA)
+            numerador = (multiplicacion * p_numerador_etiqueta);
+
+            for(int partes_denominador = 1; partes_denominador<=cantidad_etiquetas; partes_denominador++){
+                // CANTIDAD DE PALABRAS POR ETIQUETA
+                //INICIALIZAMOS
+                multiplicacion_proba = 1.0;
+                Document query100 = new Document("id", partes_denominador);
+                Document result= Coleccion_etiquetas.find(query100).first();
+
+                //TOTAL DE ORACIONES EN ESA ETIQUETA PARA P(ETIQUETA)
+                Integer total_oraciones_sub_etiqueta = result.getInteger("frecuencia");
+                //TOTAL DE PALABRAS EN ESA ETIQUETA
+                Integer total_palabras_sub_etiqueta = result.getInteger("total");
+                //NOMBRE DE ESA ETIQUETA
+                String nombre_sub_etiqueta = result.getString("etiqueta");
+
+                //AQUI SE CALCULA P(PALABRA|ETIQUETA)
+                for(int j = 0; j< palabras.length; j++){
+                    //SE BUSCA LA PALABRA EN LA BASE DE DATOS
+                    MongoCollection<Document> collection = database.getCollection(nombre_sub_etiqueta);
+                    Document query2 = new Document("palabra", palabras[j]);
+                    Document result2 = collection.find(query2).first();
+
+                    //TOTAL DE VECES QUE SE REPITE LA PALABRA EN ESA ETIQUETA
+                    Integer total_sub_palabra = 0;
+                    if(result2 != null){
+                        total_sub_palabra = result2.getInteger("cantidad");
+                    }
+
+                    //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
+                    double probabilidad = (double)(total_sub_palabra)/ (total_palabras_sub_etiqueta);
+                    //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
+                    multiplicacion_proba = multiplicacion_proba * probabilidad;
+                }
+
+                //AQUI SE CALCULA P(ETIQUETA)
+                double p_denominador_etiqueta = (double)(total_oraciones_sub_etiqueta)/ (TotalOracionesEtiquetas);
+
+                //AQUI SE CALCULA P(PALABRA|ETIQUETA)*P(ETIQUETA)
+                double resultado_probabilidad = multiplicacion_proba * p_denominador_etiqueta;
+                //AQUI SE CALCULA P(PALABRA|ETIQUETA)*P(ETIQUETA) + P(PALABRA|ETIQUETA)*P(ETIQUETA)...
+                denominador += resultado_probabilidad;
+
+
             }
 
+            //CALCULAR TOTAL
+            double total = numerador / denominador;
+            InferenciaTotales.put(nombre_etiqueta, total);
+            System.out.println(nombre_etiqueta + " " + total);
         }
-        return totales;
+        return InferenciaTotales;
     }
 
 }

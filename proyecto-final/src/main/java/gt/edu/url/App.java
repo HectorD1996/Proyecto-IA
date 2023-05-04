@@ -33,6 +33,7 @@ public class App implements Callable<Integer>
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
         Map<String, Integer> map = new HashMap<String, Integer>();
+        Map<String, Integer> map_frecuencias = new HashMap<String, Integer>();
 
         if(file != null){
             BufferedReader bfr = Files.newBufferedReader(file.toPath());
@@ -53,6 +54,15 @@ public class App implements Callable<Integer>
 
                 //PARTES DE LA PRIMERA POSICION DE PARTES
                 String[] N = (partes[0].toString()).split(" ");
+
+                //Acumular frecuencia de la etiqueta
+                if(map_frecuencias.containsKey(partes[1])){
+                    Integer nuevo1 = map_frecuencias.get(partes[1]) + 1;
+                    map_frecuencias.replace(partes[1], nuevo1);
+                }
+                else{
+                    map_frecuencias.put(partes[1], 1);
+                }
 
                 //LEEMOS PALABRA POR PALABRA
                 for(int i = 0; i<N.length; i++){
@@ -79,6 +89,13 @@ public class App implements Callable<Integer>
                 String etiquetase = entry.getKey();
                 Integer Totalote = entry.getValue();
                 conexion.TotalEtiquetas(etiquetase, Totalote);
+            }
+
+            //Calcular frecuencia de etiquetas
+            for(Map.Entry<String, Integer> entry : map_frecuencias.entrySet()){
+                String etiqueta = entry.getKey();
+                Integer frecuancia = entry.getValue();
+                conexion.FrecuenciaEtiquetas(etiqueta, frecuancia);
             }
 
             //TOTALES
@@ -122,7 +139,7 @@ public class App implements Callable<Integer>
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
         Map<String, Double> comparacion = new HashMap<String, Double>();
-        String ora = "Sir, i am waiting";
+        String ora = "secret is secret";
         ora = ora.toLowerCase();
         ora = ora.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
         ora = ora.replaceAll("\\s+", " ");
