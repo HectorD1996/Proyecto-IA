@@ -47,11 +47,15 @@ public class App implements Callable<Integer>
                 line = line.replaceAll("\\s+", " ");
 
                 total_personas++;
-                System.out.println(total_personas);
+                //System.out.println(total_personas);
 
-
+                //int found = line.indexOf("|");
                 //SEPARAR EN ETIQUETAS
                 String[] partes = line.split("\\|");
+                //String[] partes = new String[2];
+                //partes[0] = line.substring(0, found);
+                //partes[1] =line.substring(found +1);
+
 
                 //PARTES DE LA PRIMERA POSICION DE PARTES
                 String[] N = (partes[0].toString()).split(" ");
@@ -105,10 +109,15 @@ public class App implements Callable<Integer>
             Scanner scanner = new Scanner(System.in);
             String input = "";
             while(!input.equals("exit")){
-                System.out.print("Por favor ingrese la cadena > ");
+                System.out.print("Para salir ingrese -> exit\n");
+                System.out.print("Para borrar la base de datos, ingrese: -> borrar\n");
+                System.out.print("Para hacer una inferencia ingrese la cadena -> \n");
                 input = scanner.nextLine();
                 if(input.equals("exit")){
                     break;
+                }
+                if((input.toLowerCase()).equals("borrar")){
+                    conexion.Borrar();
                 }
                 Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();
                 comparacion = conexion.Frecuencia(input);
@@ -131,14 +140,47 @@ public class App implements Callable<Integer>
             return 0;
         }else {
 
-            return 1;
+            System.out.print("Para salir ingrese -> exit\n");
+            System.out.print("Para borrar la base de datos, ingrese: -> borrar\n");
+            System.out.print("Para hacer una inferencia ingrese la cadena -> \n");
+            Scanner scanner = new Scanner(System.in);
+            String input = "";
+            while(!input.equals("exit")){
+                System.out.print("Para salir ingrese -> exit\n");
+                System.out.print("Para borrar la base de datos, ingrese: -> borrar\n");
+                System.out.print("Para hacer una inferencia ingrese la cadena -> \n");
+                input = scanner.nextLine();
+                if((input.toLowerCase()).equals("exit")){
+                    break;
+                }
+                if((input.toLowerCase()).equals("borrar")){
+                    conexion.Borrar();
+                }
+                Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();
+                comparacion = conexion.Frecuencia(input);
+
+                //VERIFICAR MAYOR
+                BigDecimal max = BigDecimal.ZERO;
+                String maximo = " ";
+                for (Map.Entry<String, BigDecimal> sunoo : comparacion.entrySet()){
+                    BigDecimal nuevo = new BigDecimal(sunoo.getValue().toString());
+                    if(nuevo.compareTo(max) == 1) //si nuevo es mayor a
+                    {
+                        max = nuevo;
+                        maximo = sunoo.getKey();
+                    }
+                }
+
+                System.out.println("Mayor probabilidad de pertenecer a: " + maximo + " con la probabilidad: " + max);
+            }
+            return 0;
         }
     }
 
 
     public static void main( String[] args )
     {
-        CConexion conexion = new CConexion();
+    /*    CConexion conexion = new CConexion();
         conexion.crearConexionC();
         Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();
         String ora = "secret is secret";
@@ -160,7 +202,7 @@ public class App implements Callable<Integer>
         }
 
 
-        System.out.println("Mayor probabilidad de pertenecer a: " + maximo + " con la probabilidad: " + max);
+        System.out.println("Mayor probabilidad de pertenecer a: " + maximo + " con la probabilidad: " + max);*/
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
     }

@@ -46,6 +46,7 @@ public class CConexion {
             database.createCollection(etiqueta);
             //INGRESA LA PALABRA
             Document ingreso = new Document()
+                    .append("id", cantidad + 1)
                     .append("palabra",palabra)
                     .append("cantidad", 1);
             collection.insertOne(ingreso);
@@ -65,6 +66,7 @@ public class CConexion {
             else{
                 //LA PALABRA NO EXISTE - LA INGRESA
                 Document ingreso = new Document()
+                        .append("id", cantidad + 1)
                         .append("palabra",palabra)
                         .append("cantidad", 1);
                 collection.insertOne(ingreso);
@@ -124,6 +126,11 @@ public class CConexion {
 
     }
 
+    public void Borrar(){
+        database.drop();
+        database.getCollection("default").insertOne(new Document("clave", "valor"));
+    }
+
     public Map<String, BigDecimal> Frecuencia(String oracion){
         //BORRAR
         ListCollectionsIterable<Document> collections = database.listCollections();
@@ -144,6 +151,7 @@ public class CConexion {
         oracion = oracion.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
         oracion = oracion.replaceAll("\\s+", " ");
         String[] palabras = (oracion.split(" "));
+        double k = 1;
 
         Integer cantidad_etiquetas = Math.toIntExact(Coleccion_etiquetas.count());
 
@@ -185,7 +193,7 @@ public class CConexion {
                 }
 
                 //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
-                double prob_base = (double)(total_palabra_etiqueta)/ (total_etiqueta_base);
+                double prob_base = (double)(total_palabra_etiqueta + k)/ (total_etiqueta_base + k * coleccion_Base.count());
                 //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
                 multiplicacion = prob_base * multiplicacion;
             }
@@ -220,7 +228,7 @@ public class CConexion {
                     }
 
                     //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
-                    double probabilidad = (double)(total_sub_palabra)/ (total_palabras_sub_etiqueta);
+                    double probabilidad = (double)(total_sub_palabra + k)/ (total_palabras_sub_etiqueta + k * collection.count());
                     //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
                     multiplicacion_proba = multiplicacion_proba * probabilidad;
                 }
