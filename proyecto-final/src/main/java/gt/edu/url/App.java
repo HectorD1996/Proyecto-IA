@@ -8,15 +8,10 @@ import picocli.CommandLine;
 
 
 import javax.print.Doc;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.StringReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "IA abogado", mixinStandardHelpOptions = true, version = "0.0.1",
@@ -35,8 +30,9 @@ public class App implements Callable<Integer>
         conexion.crearConexionC();
         Map<String, Integer> map = new HashMap<String, Integer>();
         Map<String, Integer> map_frecuencias = new HashMap<String, Integer>();
-
+        Map<String, Etiquetas> GuardarPalabras = new HashMap<String, Etiquetas>();
         if(file != null){
+            Boolean primeralinea = true;
             BufferedReader bfr = Files.newBufferedReader(file.toPath());
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -46,15 +42,16 @@ public class App implements Callable<Integer>
                 line = line.replaceAll("\\|\\|+", " ");
                 line = line.replaceAll("\\s+", " ");
 
-                total_personas++;
-                //System.out.println(total_personas);
+                if(primeralinea == true){
+                    line = line.replace("\uFEFF", "");
+                    primeralinea = false;
+                }
 
-                //int found = line.indexOf("|");
+                total_personas++;
+                System.out.println(total_personas);
+
                 //SEPARAR EN ETIQUETAS
                 String[] partes = line.split("\\|");
-                //String[] partes = new String[2];
-                //partes[0] = line.substring(0, found);
-                //partes[1] =line.substring(found +1);
 
 
                 //PARTES DE LA PRIMERA POSICION DE PARTES
@@ -69,6 +66,7 @@ public class App implements Callable<Integer>
                     map_frecuencias.put(partes[1], 1);
                 }
 
+
                 //LEEMOS PALABRA POR PALABRA
                 for(int i = 0; i<N.length; i++){
                     String palabra = N[i].toString();
@@ -76,7 +74,23 @@ public class App implements Callable<Integer>
                     for(int j = 1; j<= partes.length - 1; j++ ){
                         if(partes[j] != ""){
                             String etiqueta = partes[j];
-                            conexion.IngresarDato(etiqueta, palabra);
+                            //conexion.IngresarDato(etiqueta, palabra);
+                            Integer Ncantidad = 1;
+                            String concatenacion = palabra + etiqueta;
+                            //conexion.IngresarDato(etiqueta, palabra);
+
+                            if(GuardarPalabras.containsKey(concatenacion)){
+                                //System.out.print("Hasta aqui todo bien");
+                                Ncantidad = GuardarPalabras.get(concatenacion).cantidad + 1;
+                                Etiquetas ingreso = new Etiquetas(etiqueta, palabra, Ncantidad);
+                                GuardarPalabras.replace(concatenacion, ingreso);
+                            }
+                            else{
+                                Etiquetas ingreso = new Etiquetas(etiqueta, palabra, Ncantidad);
+                                GuardarPalabras.put(concatenacion, ingreso);
+                            }
+
+
                             if(map.containsKey(etiqueta)){
                                 Integer nuevo = map.get(etiqueta) + 1;
                                 map.replace(etiqueta, nuevo);
@@ -87,6 +101,14 @@ public class App implements Callable<Integer>
                         }
                     }
                 }
+            }
+
+            //INGRESAR A LA BASE DE DATOS
+            for(Map.Entry<String, Etiquetas> entry : GuardarPalabras.entrySet()){
+                String etiquetaI = entry.getValue().etiqueta;
+                String palabraI = entry.getValue().palabra;
+                Integer cantidadI = entry.getValue().cantidad;
+                conexion.IngresarDatoP(etiquetaI, palabraI, cantidadI);
             }
 
             //CALCULAR PROBABILIDAD
@@ -178,8 +200,65 @@ public class App implements Callable<Integer>
     }
 
 
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws IOException {
+        /*File archivo = new File ("C:\\Users\\HP\\Documents\\PruebasPro\\Proyecto-IA\\proyecto-final\\prueba.txt");
+        FileReader fr = new FileReader(archivo);
+        BufferedReader bfr = new BufferedReader(fr);
+        String line;
+        while ((line = bfr.readLine().toString()) != null) {
+            line = line.toLowerCase();
+            line = line.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
+            line = line.replaceAll("\\|\\|+", " ");
+            line = line.replaceAll("\\s+", " ");
+
+            //System.out.println(total_personas);
+
+            String[] partes = line.split("\\|");
+
+            //PARTES DE LA PRIMERA POSICION DE PARTES
+            String[] N = (partes[0].toString()).split(" ");
+
+
+            //  AQUI EMPIEZA LO NUEVO
+
+            Map<String, Etiquetas> GuardarPalabras = new HashMap<String, Etiquetas>();
+            Map<String, Integer> GuardarAyuda = new HashMap<String, Integer>();
+            String concatenacion = " ";
+            for(int i = 0; i<N.length; i++){
+                line = line.replace("\uFEFF", "");
+                String palabra = N[i].toString();
+                //LEEMOS POR ETIQUETA
+                for(int j = 1; j<= partes.length - 1; j++ ){
+                    if(partes[j] != ""){
+                        String etiqueta = partes[j];
+                        Integer id = 0;
+                        Integer Ncantidad = 1;
+
+                        String llave1 = concatenacion;
+                        concatenacion= palabra + etiqueta;
+                        if(llave1.equals(concatenacion)){
+                            System.out.print("son iguales");
+                        }
+                        //conexion.IngresarDato(etiqueta, palabra);
+
+                        if(GuardarPalabras.containsKey(concatenacion)){
+                            Ncantidad = GuardarPalabras.get(concatenacion).cantidad + 1;
+                            Etiquetas ingreso = new Etiquetas(etiqueta, palabra, Ncantidad);
+                            GuardarPalabras.replace(concatenacion, ingreso);
+                        }
+                        else{
+                            Etiquetas ingreso = new Etiquetas(etiqueta, palabra, Ncantidad);
+                            GuardarPalabras.put(concatenacion, ingreso);
+                        }
+
+
+                    }
+                }
+            }
+        }*/
+
+
+
     /*    CConexion conexion = new CConexion();
         conexion.crearConexionC();
         Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();

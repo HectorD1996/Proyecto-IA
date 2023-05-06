@@ -75,6 +75,48 @@ public class CConexion {
 
     }
 
+
+    public void IngresarDatoP(String etiqueta, String palabra, int Ncantidad){
+
+        MongoCollection<Document> collection = database.getCollection(etiqueta);
+
+        //VERIFICAR SI EXISTE LA COLECCION
+        Integer cantidad = Math.toIntExact(collection.count());
+
+        if(cantidad == 0){
+            //SI NO EXISTE - LA CREA
+            database.createCollection(etiqueta);
+            //INGRESA LA PALABRA
+            Document ingreso = new Document()
+                    .append("id", cantidad + 1)
+                    .append("palabra",palabra)
+                    .append("cantidad", Ncantidad);
+            collection.insertOne(ingreso);
+        }
+        else{
+            //BUSCAR LA PALABRA
+            Document query = new Document("palabra", palabra);
+            Document result = collection.find(query).first();
+
+            //VERIFICA SI EXISTE O NO
+            if(result != null){
+                //SI EXISTE - MODIFICA LA CANTIDAD
+                Integer valor = result.getInteger("cantidad");
+                collection.updateOne(new Document("palabra", palabra),
+                        new Document("$set", new Document("cantidad", valor + Ncantidad)));
+            }
+            else{
+                //LA PALABRA NO EXISTE - LA INGRESA
+                Document ingreso = new Document()
+                        .append("id", cantidad + 1)
+                        .append("palabra",palabra)
+                        .append("cantidad", Ncantidad);
+                collection.insertOne(ingreso);
+            }
+        }
+
+    }
+
     public Integer Total_Oraciones(String etiqueta){
         Document query = new Document("etiqueta", etiqueta);
         Document result = database.getCollection("etiquetas").find(query).first();
