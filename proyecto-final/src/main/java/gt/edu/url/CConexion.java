@@ -11,6 +11,8 @@ import com.mongodb.client.model.Aggregates.*;
 import org.bson.Document;
 
 import javax.print.Doc;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;
@@ -122,14 +124,14 @@ public class CConexion {
 
     }
 
-    public Map<String, Double> Frecuencia(String oracion){
+    public Map<String, BigDecimal> Frecuencia(String oracion){
         //BORRAR
         ListCollectionsIterable<Document> collections = database.listCollections();
 
         //INICIALIZAR VARIABLES
         MongoCollection<Document> Coleccion_etiquetas = database.getCollection("etiquetas");
         Integer TotalOracionesEtiquetas = 0;
-        Map<String, Double> InferenciaTotales = new HashMap<String, Double>();
+        Map<String, BigDecimal> InferenciaTotales = new HashMap<String, BigDecimal>();
 
         //VER CANTIDAD TOTAL DE ORACIONES - SE GUARDA EN valorM
         for (Document etiqueta_uni : collections){
@@ -235,11 +237,15 @@ public class CConexion {
             }
 
             //CALCULAR TOTAL
+            BigDecimal totaldecimal;
+            totaldecimal = new BigDecimal(numerador).divide(new BigDecimal(denominador), 6, RoundingMode.HALF_UP);//cantidad de decimales de la solucion
+
             double total = numerador / denominador;
-            InferenciaTotales.put(nombre_etiqueta, total);
-            System.out.println(nombre_etiqueta + " " + total);
+            InferenciaTotales.put(nombre_etiqueta, totaldecimal);
+            System.out.println(nombre_etiqueta + " " + totaldecimal);
         }
         return InferenciaTotales;
+
     }
 
 }

@@ -11,6 +11,7 @@ import javax.print.Doc;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -109,15 +110,16 @@ public class App implements Callable<Integer>
                 if(input.equals("exit")){
                     break;
                 }
-                Map<String, Double> comparacion = new HashMap<String, Double>();
+                Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();
                 comparacion = conexion.Frecuencia(input);
 
                 //VERIFICAR MAYOR
-                double max = 0.0;
+                BigDecimal max = BigDecimal.ZERO;
                 String maximo = " ";
-                for (Map.Entry<String, Double> sunoo : comparacion.entrySet()){
-                    double nuevo = sunoo.getValue();
-                    if(nuevo > max){
+                for (Map.Entry<String, BigDecimal> sunoo : comparacion.entrySet()){
+                    BigDecimal nuevo = new BigDecimal(sunoo.getValue().toString());
+                    if(nuevo.compareTo(max) == 1) //si nuevo es mayor a
+                    {
                         max = nuevo;
                         maximo = sunoo.getKey();
                     }
@@ -138,7 +140,7 @@ public class App implements Callable<Integer>
     {
         CConexion conexion = new CConexion();
         conexion.crearConexionC();
-        Map<String, Double> comparacion = new HashMap<String, Double>();
+        Map<String, BigDecimal> comparacion = new HashMap<String, BigDecimal>();
         String ora = "secret is secret";
         ora = ora.toLowerCase();
         ora = ora.replaceAll("[!\\\"#$%&'()*+,-./:;<=>?@\\\\[\\\\]^_`{}~]", " ");
@@ -146,11 +148,12 @@ public class App implements Callable<Integer>
         comparacion = conexion.Frecuencia(ora);
 
         //VERIFICAR MAYOR
-        double max = 0.0;
+        BigDecimal max = BigDecimal.ZERO;
         String maximo = " ";
-        for (Map.Entry<String, Double> sunoo : comparacion.entrySet()){
-            double nuevo = sunoo.getValue();
-            if(nuevo > max){
+        for (Map.Entry<String, BigDecimal> sunoo : comparacion.entrySet()){
+            BigDecimal nuevo = new BigDecimal(sunoo.getValue().toString());
+            if(nuevo.compareTo(max) == 1) //si nuevo es mayor a
+                {
                 max = nuevo;
                 maximo = sunoo.getKey();
             }
