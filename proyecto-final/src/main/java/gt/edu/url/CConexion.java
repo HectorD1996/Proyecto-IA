@@ -235,7 +235,7 @@ public class CConexion {
                 }
 
                 //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
-                double prob_base = (double)(total_palabra_etiqueta + k)/ (total_etiqueta_base + k * coleccion_Base.count());
+                double prob_base = (double)(total_palabra_etiqueta + k)/ (total_etiqueta_base + k* coleccion_Base.count());
                 //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
                 multiplicacion = prob_base * multiplicacion;
             }
@@ -270,7 +270,7 @@ public class CConexion {
                     }
 
                     //AQUI ES EL CALCULO DE P(PALABRA|ETIQUETA)
-                    double probabilidad = (double)(total_sub_palabra + k)/ (total_palabras_sub_etiqueta + k * collection.count());
+                    double probabilidad = (double)(total_sub_palabra + k)/ (total_palabras_sub_etiqueta + k  * coleccion_Base.count());
                     //AQUI VOY MULTIPLICANDO P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) * P(PALABRA|ETIQUETA) ....
                     multiplicacion_proba = multiplicacion_proba * probabilidad;
                 }
